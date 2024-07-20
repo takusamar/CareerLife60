@@ -8,7 +8,7 @@ service cloud.firestore {
 
       match /histories/{historyId} {
         allow read: if true;
-        allow write: if false;
+        allow create: if true;
       }
     }
   }
