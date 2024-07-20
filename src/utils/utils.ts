@@ -10,7 +10,6 @@ dayjs.extend(isBetween);
 
 import { History } from "../models/History";
 import { historyColors } from "./constants";
-import { User } from "../models/User";
 
 // 1976年2月生まれ：経歴開始1982年4月→6歳
 export function calcAge(birthYear: number, targetYear: number) {
@@ -18,7 +17,7 @@ export function calcAge(birthYear: number, targetYear: number) {
 }
 
 // 指定された年月が該当する経歴一覧のインデックスを返す
-function findHistoryIndex(histories: History[], target: Dayjs) {
+export function findHistoryIndex(histories: History[], target: Dayjs) {
   return histories.findIndex((history) => {
     // 経歴の開始年月と終了年月を取得
     const start = dayjs(history.start);
@@ -38,17 +37,10 @@ function getHistoryColor(index: number) {
 }
 
 export function getBackgroundColor(
-  user: User,
   histories: History[],
-  year: number,
-  month: number
+  birthYearMonth: Dayjs,
+  target: Dayjs
 ) {
-  const target = dayjs()
-    .year(year)
-    .month(month - 1);
-  const birthYearMonth = dayjs()
-    .year(user.birthYear)
-    .month(user.birthMonth - 1);
   const now = dayjs();
 
   // 生年月以前の場合

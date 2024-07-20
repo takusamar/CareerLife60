@@ -1,5 +1,5 @@
 import { createRootRoute, Outlet } from "@tanstack/react-router";
-import { TanStackRouterDevtools } from "@tanstack/router-devtools";
+// import { TanStackRouterDevtools } from "@tanstack/router-devtools";
 import { AppBar } from "../components/AppBar";
 import { Box, Container } from "@chakra-ui/react";
 
@@ -14,7 +14,7 @@ function RootPage() {
       <Container maxW="640px">
         <Outlet />
       </Container>
-      <TanStackRouterDevtools />
+      {/* <TanStackRouterDevtools /> */}
     </Box>
   );
 }

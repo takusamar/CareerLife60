@@ -1,9 +1,10 @@
 export const historyColors = [
   "yellow",
+  "teal",
   "orange",
-  "pink",
   "cyan",
-  "green",
-  "blue",
   "purple",
+  "green",
+  "pink",
+  "blue",
 ];
