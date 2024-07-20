@@ -2,8 +2,10 @@ import { FirebaseOptions, getApps, initializeApp } from "firebase/app";
 import {
   addDoc,
   collection,
+  doc,
   getFirestore,
   initializeFirestore,
+  setDoc,
 } from "firebase/firestore";
 import { History, historyConverter } from "../models/History";
 
@@ -37,6 +39,25 @@ export async function createHistory(
       historyConverter
     );
     return await addDoc(col, data);
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error(error.message);
+    }
+    throw error;
+  }
+}
+
+export async function updateHistory(
+  userId: string,
+  historyId: string,
+  data: Partial<Omit<History, "id" | "updatedAt">>
+) {
+  try {
+    const db = getFirestore();
+    const ref = doc(db, "users", userId, "histories", historyId).withConverter(
+      historyConverter
+    );
+    return await setDoc(ref, data);
   } catch (error) {
     if (error instanceof Error) {
       console.error(error.message);

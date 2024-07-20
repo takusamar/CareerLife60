@@ -35,3 +35,22 @@ export function useHistories(userId: string, suspense?: boolean) {
     throw error;
   }
 }
+
+export function useHistory(
+  userId: string,
+  historyId: string,
+  suspense?: boolean
+) {
+  const db = useFirestore();
+  const ref = doc(db, "users", userId, "histories", historyId).withConverter(
+    historyConverter
+  );
+  try {
+    return useFirestoreDocData(ref, { suspense });
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error(error.message);
+    }
+    throw error;
+  }
+}

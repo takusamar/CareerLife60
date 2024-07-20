@@ -19,6 +19,9 @@ import { Route as rootRoute } from './routes/__root'
 const IndexLazyImport = createFileRoute('/')()
 const UserIdIndexLazyImport = createFileRoute('/$userId/')()
 const UserIdHistoryAddLazyImport = createFileRoute('/$userId/history/add')()
+const UserIdHistoryHistoryIdLazyImport = createFileRoute(
+  '/$userId/history/$historyId',
+)()
 
 // Create/Update Routes
 
@@ -39,6 +42,15 @@ const UserIdHistoryAddLazyRoute = UserIdHistoryAddLazyImport.update({
   import('./routes/$userId/history/add.lazy').then((d) => d.Route),
 )
 
+const UserIdHistoryHistoryIdLazyRoute = UserIdHistoryHistoryIdLazyImport.update(
+  {
+    path: '/$userId/history/$historyId',
+    getParentRoute: () => rootRoute,
+  } as any,
+).lazy(() =>
+  import('./routes/$userId/history/$historyId.lazy').then((d) => d.Route),
+)
+
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
@@ -57,6 +69,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof UserIdIndexLazyImport
       parentRoute: typeof rootRoute
     }
+    '/$userId/history/$historyId': {
+      id: '/$userId/history/$historyId'
+      path: '/$userId/history/$historyId'
+      fullPath: '/$userId/history/$historyId'
+      preLoaderRoute: typeof UserIdHistoryHistoryIdLazyImport
+      parentRoute: typeof rootRoute
+    }
     '/$userId/history/add': {
       id: '/$userId/history/add'
       path: '/$userId/history/add'
@@ -72,6 +91,7 @@ declare module '@tanstack/react-router' {
 export const routeTree = rootRoute.addChildren({
   IndexLazyRoute,
   UserIdIndexLazyRoute,
+  UserIdHistoryHistoryIdLazyRoute,
   UserIdHistoryAddLazyRoute,
 })
 
@@ -85,6 +105,7 @@ export const routeTree = rootRoute.addChildren({
       "children": [
         "/",
         "/$userId/",
+        "/$userId/history/$historyId",
         "/$userId/history/add"
       ]
     },
@@ -93,6 +114,9 @@ export const routeTree = rootRoute.addChildren({
     },
     "/$userId/": {
       "filePath": "$userId/index.lazy.tsx"
+    },
+    "/$userId/history/$historyId": {
+      "filePath": "$userId/history/$historyId.lazy.tsx"
     },
     "/$userId/history/add": {
       "filePath": "$userId/history/add.lazy.tsx"
