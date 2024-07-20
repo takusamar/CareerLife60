@@ -80,11 +80,7 @@ function AddHistoryPage() {
     setStartYears(yearList);
   }, [user, user.birthYear, formValues.endYear]);
 
-  console.log("startYears", startYears);
-  console.log("endYears", endYears);
-
   const onSubmit = async (data: InputForm) => {
-    console.log(data);
     if (
       data.startYear > data.endYear ||
       (data.startYear == data.endYear && data.startMonth > data.endMonth)
