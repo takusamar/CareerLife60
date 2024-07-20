@@ -10,10 +10,8 @@ import {
 export interface History {
   id: string;
   title: string;
-  startYear: number;
-  startMonth: number;
-  endYear: number;
-  endMonth: number;
+  start: Date;
+  end: Date;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -22,10 +20,8 @@ export const historyConverter: FirestoreDataConverter<History> = {
   toFirestore(history: WithFieldValue<History>): DocumentData {
     return {
       title: history.title,
-      startYear: history.startYear,
-      startMonth: history.startMonth,
-      endYear: history.endYear,
-      endMonth: history.endMonth,
+      start: history.start,
+      end: history.end,
       createdAt:
         history.createdAt === undefined ? serverTimestamp() : undefined,
       updatedAt: serverTimestamp(),
@@ -39,10 +35,8 @@ export const historyConverter: FirestoreDataConverter<History> = {
     return {
       id: snapshot.id,
       title: data.title,
-      startYear: data.startYear,
-      startMonth: data.startMonth,
-      endYear: data.endYear,
-      endMonth: data.endMonth,
+      start: data.start.toDate(),
+      end: data.end.toDate(),
       createdAt: data.createdAt?.toDate(),
       updatedAt: data.updatedAt?.toDate(),
     };

@@ -4,7 +4,7 @@ import {
   useFirestoreDocData,
 } from "reactfire";
 import { userConverter } from "../models/User";
-import { collection, doc } from "firebase/firestore";
+import { collection, doc, orderBy, query } from "firebase/firestore";
 import { historyConverter } from "../models/History";
 
 export function useUser(userId: string, suspense?: boolean) {
@@ -25,8 +25,9 @@ export function useHistories(userId: string, suspense?: boolean) {
   const col = collection(db, "users", userId, "histories").withConverter(
     historyConverter
   );
+  const q = query(col, orderBy("start"));
   try {
-    return useFirestoreCollectionData(col, { suspense });
+    return useFirestoreCollectionData(q, { suspense });
   } catch (error) {
     if (error instanceof Error) {
       console.error(error.message);
