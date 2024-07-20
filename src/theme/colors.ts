@@ -30,4 +30,5 @@ export const colors = {
   },
 
   divider: "rgba(0, 0, 0, 0.12)",
+  button: "#399393",
 };

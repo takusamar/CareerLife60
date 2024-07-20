@@ -16,20 +16,28 @@ import { Route as rootRoute } from './routes/__root'
 
 // Create Virtual Routes
 
-const UserIdLazyImport = createFileRoute('/$userId')()
 const IndexLazyImport = createFileRoute('/')()
+const UserIdIndexLazyImport = createFileRoute('/$userId/')()
+const UserIdHistoryAddLazyImport = createFileRoute('/$userId/history/add')()
 
 // Create/Update Routes
-
-const UserIdLazyRoute = UserIdLazyImport.update({
-  path: '/$userId',
-  getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./routes/$userId.lazy').then((d) => d.Route))
 
 const IndexLazyRoute = IndexLazyImport.update({
   path: '/',
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/index.lazy').then((d) => d.Route))
+
+const UserIdIndexLazyRoute = UserIdIndexLazyImport.update({
+  path: '/$userId/',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() => import('./routes/$userId/index.lazy').then((d) => d.Route))
+
+const UserIdHistoryAddLazyRoute = UserIdHistoryAddLazyImport.update({
+  path: '/$userId/history/add',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() =>
+  import('./routes/$userId/history/add.lazy').then((d) => d.Route),
+)
 
 // Populate the FileRoutesByPath interface
 
@@ -42,11 +50,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexLazyImport
       parentRoute: typeof rootRoute
     }
-    '/$userId': {
-      id: '/$userId'
+    '/$userId/': {
+      id: '/$userId/'
       path: '/$userId'
       fullPath: '/$userId'
-      preLoaderRoute: typeof UserIdLazyImport
+      preLoaderRoute: typeof UserIdIndexLazyImport
+      parentRoute: typeof rootRoute
+    }
+    '/$userId/history/add': {
+      id: '/$userId/history/add'
+      path: '/$userId/history/add'
+      fullPath: '/$userId/history/add'
+      preLoaderRoute: typeof UserIdHistoryAddLazyImport
       parentRoute: typeof rootRoute
     }
   }
@@ -56,7 +71,8 @@ declare module '@tanstack/react-router' {
 
 export const routeTree = rootRoute.addChildren({
   IndexLazyRoute,
-  UserIdLazyRoute,
+  UserIdIndexLazyRoute,
+  UserIdHistoryAddLazyRoute,
 })
 
 /* prettier-ignore-end */
@@ -68,14 +84,18 @@ export const routeTree = rootRoute.addChildren({
       "filePath": "__root.tsx",
       "children": [
         "/",
-        "/$userId"
+        "/$userId/",
+        "/$userId/history/add"
       ]
     },
     "/": {
       "filePath": "index.lazy.tsx"
     },
-    "/$userId": {
-      "filePath": "$userId.lazy.tsx"
+    "/$userId/": {
+      "filePath": "$userId/index.lazy.tsx"
+    },
+    "/$userId/history/add": {
+      "filePath": "$userId/history/add.lazy.tsx"
     }
   }
 }

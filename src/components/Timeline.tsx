@@ -13,10 +13,6 @@ export const Timeline = ({ user, histories }: Props) => {
   const borderColor = "divider";
   const borderWidth = 1;
 
-  // test
-  // const hoge = getBackgroundColor(user, histories, 1988, 4);
-  // console.log("hoge", hoge);
-
   return (
     <VStack spacing={0} w="full">
       <HStack spacing={0} w="full">

@@ -1,9 +1,9 @@
-import { createLazyFileRoute } from "@tanstack/react-router";
-import { useHistories, useUser } from "../hooks/useFirestore";
-import { Timeline } from "../components/Timeline";
+import { createLazyFileRoute, Link } from "@tanstack/react-router";
+import { useHistories, useUser } from "../../hooks/useFirestore";
+import { Timeline } from "../../components/Timeline";
 import { Button, HStack, Spacer, VStack } from "@chakra-ui/react";
 
-export const Route = createLazyFileRoute("/$userId")({
+export const Route = createLazyFileRoute("/$userId/")({
   component: UserPage,
 });
 
@@ -26,7 +26,9 @@ function UserPage() {
     <VStack pt={4} pb={8} w="full" spacing={4}>
       <HStack w="full">
         <Spacer />
-        <Button size="sm">経歴追加</Button>
+        <Link to={`/${userId}/history/add`}>
+          <Button size="sm">経歴追加</Button>
+        </Link>
       </HStack>
       <Timeline user={user} histories={histories} />
     </VStack>
