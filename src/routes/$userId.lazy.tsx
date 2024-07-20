@@ -1,9 +1,7 @@
 import { createLazyFileRoute } from "@tanstack/react-router";
 import { useHistories, useUser } from "../hooks/useFirestore";
-import { calcAge } from "../utils/utils";
 import { Timeline } from "../components/Timeline";
-import { Box } from "@chakra-ui/react";
-import dayjs from "dayjs";
+import { Button, HStack, Spacer, VStack } from "@chakra-ui/react";
 
 export const Route = createLazyFileRoute("/$userId")({
   component: UserPage,
@@ -25,28 +23,12 @@ function UserPage() {
   }
 
   return (
-    <Box py={2}>
-      <div>Hello {user.name}さん</div>
-      <div>
-        {user.birthYear}年{user.birthMonth}月
-      </div>
-      {histories.map((history) => {
-        const start = dayjs(history.start);
-        const end = dayjs(history.end);
-        return (
-          <div key={history.id}>
-            <div>{history.title}</div>
-            <div>
-              {start.format("YYYY年MM月")}〜{end.format("YYYY年MM月")}
-            </div>
-            <div>
-              {calcAge(user.birthYear, start.year())}歳〜
-              {calcAge(user.birthYear, end.year())}歳
-            </div>
-          </div>
-        );
-      })}
+    <VStack pt={4} pb={8} w="full" spacing={4}>
+      <HStack w="full">
+        <Spacer />
+        <Button size="sm">経歴追加</Button>
+      </HStack>
       <Timeline user={user} histories={histories} />
-    </Box>
+    </VStack>
   );
 }
