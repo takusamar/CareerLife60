@@ -2,6 +2,7 @@ import { FirebaseOptions, getApps, initializeApp } from "firebase/app";
 import {
   addDoc,
   collection,
+  deleteDoc,
   doc,
   getFirestore,
   initializeFirestore,
@@ -58,6 +59,19 @@ export async function updateHistory(
       historyConverter
     );
     return await setDoc(ref, data);
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error(error.message);
+    }
+    throw error;
+  }
+}
+
+export async function deleteHistory(userId: string, historyId: string) {
+  try {
+    const db = getFirestore();
+    const ref = doc(db, "users", userId, "histories", historyId);
+    return await deleteDoc(ref);
   } catch (error) {
     if (error instanceof Error) {
       console.error(error.message);

@@ -1,9 +1,19 @@
-import { Box, Text, useToast } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  HStack,
+  Spacer,
+  Text,
+  useDisclosure,
+  useToast,
+} from "@chakra-ui/react";
 import { createLazyFileRoute, useNavigate } from "@tanstack/react-router";
 import { useHistory, useUser } from "../../../hooks/useFirestore";
 import { HistoryForm, HistoryInput } from "../../../components/HistoryForm";
-import { updateHistory } from "../../../services/Firebase";
+import { deleteHistory, updateHistory } from "../../../services/Firebase";
 import dayjs from "dayjs";
+import { ConfirmDialog } from "../../../components/ConfirmDialog";
+import { useState } from "react";
 
 export const Route = createLazyFileRoute("/$userId/history/$historyId")({
   component: HistoryPage,
@@ -17,7 +27,13 @@ function HistoryPage() {
     historyId,
     true
   );
+  const [isDeleting, setIsDeleting] = useState(false);
 
+  const {
+    isOpen: isConfirmOpen,
+    onOpen: onConfirmOpen,
+    onClose: onConfirmClose,
+  } = useDisclosure();
   const navigate = useNavigate();
   const toast = useToast();
 
@@ -47,6 +63,21 @@ function HistoryPage() {
     navigate({ to: `/${userId}`, params: { userId } });
   };
 
+  const onDelete = async () => {
+    setIsDeleting(true);
+
+    // DBから経歴を削除
+    await deleteHistory(userId, historyId);
+
+    toast({
+      title: "経歴を削除しました",
+      status: "success",
+      duration: 3000,
+    });
+    setIsDeleting(false);
+    onClose();
+  };
+
   if (userStatus === "loading" || historyStatus === "loading") {
     return <div>読み込み中...</div>;
   }
@@ -56,15 +87,33 @@ function HistoryPage() {
 
   return (
     <Box py={8}>
-      <Text textStyle="h6">経歴の詳細</Text>
       {user && history && (
-        <HistoryForm
-          birthYear={user.birthYear}
-          history={history}
-          submitLabel="更新"
-          onClose={onClose}
-          onSubmit={onSubmit}
-        />
+        <>
+          <HStack w="full">
+            <Text textStyle="h6">経歴の詳細</Text>
+            <Spacer />
+            <Button size="sm" colorScheme="red" onClick={onConfirmOpen}>
+              経歴を削除
+            </Button>
+          </HStack>
+          <HistoryForm
+            birthYear={user.birthYear}
+            history={history}
+            submitLabel="更新"
+            onClose={onClose}
+            onSubmit={onSubmit}
+          />
+          <ConfirmDialog
+            title="経歴の削除"
+            message={`${history.title} を削除しますか？`}
+            cancelLabel="キャンセル"
+            submitLabel="削除"
+            isOpen={isConfirmOpen}
+            isLoading={isDeleting}
+            onClose={onConfirmClose}
+            onSubmit={onDelete}
+          />
+        </>
       )}
     </Box>
   );
