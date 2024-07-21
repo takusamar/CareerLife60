@@ -1,4 +1,4 @@
-import { HStack, Spacer, Text } from "@chakra-ui/react";
+import { Button, HStack, Spacer, Text } from "@chakra-ui/react";
 import { Link } from "@tanstack/react-router";
 import { useAuthUser } from "../hooks/useFirebaseAuth";
 import { UserAvatar } from "./UserAvatar";
@@ -14,7 +14,13 @@ export const AppBar = () => {
         </Text>
       </Link>
       <Spacer />
-      {user && <UserAvatar uid={user.uid} />}
+      {user ? (
+        <UserAvatar uid={user.uid} />
+      ) : (
+        <Link to={"/login"}>
+          <Button size="sm">ログイン</Button>
+        </Link>
+      )}
     </HStack>
   );
 };

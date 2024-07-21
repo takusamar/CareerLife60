@@ -14,6 +14,7 @@ import { deleteHistory, updateHistory } from "../../../services/Firebase";
 import dayjs from "dayjs";
 import { ConfirmDialog } from "../../../components/ConfirmDialog";
 import { useState } from "react";
+import { useAuthUser } from "../../../hooks/useFirebaseAuth";
 
 export const Route = createLazyFileRoute("/$userId/history/$historyId")({
   component: HistoryPage,
@@ -21,6 +22,7 @@ export const Route = createLazyFileRoute("/$userId/history/$historyId")({
 
 function HistoryPage() {
   const { userId, historyId } = Route.useParams();
+  const authUser = useAuthUser();
   const { data: user, status: userStatus } = useUser(userId, true);
   const { data: history, status: historyStatus } = useHistory(
     userId,
@@ -92,27 +94,32 @@ function HistoryPage() {
           <HStack w="full">
             <Text textStyle="h6">経歴の詳細</Text>
             <Spacer />
-            <Button size="sm" colorScheme="red" onClick={onConfirmOpen}>
-              経歴を削除
-            </Button>
+            {authUser?.uid === userId && (
+              <Button size="sm" colorScheme="red" onClick={onConfirmOpen}>
+                経歴を削除
+              </Button>
+            )}
           </HStack>
           <HistoryForm
             birthYear={user.birth.getFullYear()}
             history={history}
+            readOnly={!authUser || authUser.uid !== userId}
             submitLabel="更新"
             onClose={onClose}
             onSubmit={onSubmit}
           />
-          <ConfirmDialog
-            title="経歴の削除"
-            message={`${history.title} を削除しますか？`}
-            cancelLabel="キャンセル"
-            submitLabel="削除"
-            isOpen={isConfirmOpen}
-            isLoading={isDeleting}
-            onClose={onConfirmClose}
-            onSubmit={onDelete}
-          />
+          {authUser?.uid === userId && (
+            <ConfirmDialog
+              title="経歴の削除"
+              message={`${history.title} を削除しますか？`}
+              cancelLabel="キャンセル"
+              submitLabel="削除"
+              isOpen={isConfirmOpen}
+              isLoading={isDeleting}
+              onClose={onConfirmClose}
+              onSubmit={onDelete}
+            />
+          )}
         </>
       )}
     </Box>

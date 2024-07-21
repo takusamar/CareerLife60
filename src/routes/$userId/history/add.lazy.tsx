@@ -1,9 +1,10 @@
-import { Text, Box, useToast } from "@chakra-ui/react";
-import { createLazyFileRoute, useNavigate } from "@tanstack/react-router";
+import { Text, Box, useToast, Button, VStack } from "@chakra-ui/react";
+import { createLazyFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import dayjs from "dayjs";
 import { createHistory } from "../../../services/Firebase";
 import { useUser } from "../../../hooks/useFirestore";
 import { HistoryForm, HistoryInput } from "../../../components/HistoryForm";
+import { useAuthUser } from "../../../hooks/useFirebaseAuth";
 
 export const Route = createLazyFileRoute("/$userId/history/add")({
   component: AddHistoryPage,
@@ -11,6 +12,7 @@ export const Route = createLazyFileRoute("/$userId/history/add")({
 
 function AddHistoryPage() {
   const { userId } = Route.useParams();
+  const authUser = useAuthUser();
   const { data: user } = useUser(userId, true);
 
   const navigate = useNavigate();
@@ -40,6 +42,18 @@ function AddHistoryPage() {
   const onClose = () => {
     navigate({ to: `/${userId}`, params: { userId } });
   };
+
+  // ログインユーザーとページのユーザーが異なる場合は権限がない旨を表示
+  if (!authUser || authUser.uid !== userId) {
+    return (
+      <VStack py={8} spacing={10}>
+        <Text textStyle="body1">権限がありません</Text>
+        <Link to={"/$userId"} params={{ userId }}>
+          <Button colorScheme="red">戻る</Button>
+        </Link>
+      </VStack>
+    );
+  }
 
   return (
     <Box py={8}>
