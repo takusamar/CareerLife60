@@ -10,9 +10,7 @@ interface Props {
   histories: History[];
 }
 export const Timeline = ({ user, histories }: Props) => {
-  const birthYearMonth = dayjs()
-    .year(user.birthYear)
-    .month(user.birthMonth - 1);
+  const birth = dayjs(user.birth);
   const maxAge = 60;
   const maxMonth = 12;
   const borderColor = "divider";
@@ -43,7 +41,7 @@ export const Timeline = ({ user, histories }: Props) => {
       </HStack>
       {[...Array(maxAge)].map((_, age) => {
         // 年の表示は5年ごとに行う
-        const labelYear = age % 5 === 0 ? user.birthYear + age : "";
+        const labelYear = age % 5 === 0 ? birth.year() + age : "";
         const labelAge = age % 5 === 0 ? age : "";
         // 10年ごとに下線を太くする
         const bottomWidth = age % 10 === 9 ? borderWidth + 1 : borderWidth;
@@ -64,12 +62,8 @@ export const Timeline = ({ user, histories }: Props) => {
             </Box>
             {[...Array(maxMonth)].map((_, index) => {
               // 背景色を決定する
-              const target = birthYearMonth.add(age, "year").month(index);
-              const bgColor = getBackgroundColor(
-                histories,
-                birthYearMonth,
-                target
-              );
+              const target = birth.add(age, "year").month(index);
+              const bgColor = getBackgroundColor(histories, birth, target);
               const historyIndex = findHistoryIndex(histories, target);
               const path =
                 historyIndex >= 0

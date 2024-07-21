@@ -13,11 +13,14 @@ import { createFileRoute } from '@tanstack/react-router'
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as UserIdIndexImport } from './routes/$userId/index'
 
 // Create Virtual Routes
 
+const SignupFormLazyImport = createFileRoute('/signup-form')()
+const SignupLazyImport = createFileRoute('/signup')()
+const LoginLazyImport = createFileRoute('/login')()
 const IndexLazyImport = createFileRoute('/')()
-const UserIdIndexLazyImport = createFileRoute('/$userId/')()
 const UserIdHistoryAddLazyImport = createFileRoute('/$userId/history/add')()
 const UserIdHistoryHistoryIdLazyImport = createFileRoute(
   '/$userId/history/$historyId',
@@ -25,15 +28,30 @@ const UserIdHistoryHistoryIdLazyImport = createFileRoute(
 
 // Create/Update Routes
 
+const SignupFormLazyRoute = SignupFormLazyImport.update({
+  path: '/signup-form',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() => import('./routes/signup-form.lazy').then((d) => d.Route))
+
+const SignupLazyRoute = SignupLazyImport.update({
+  path: '/signup',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() => import('./routes/signup.lazy').then((d) => d.Route))
+
+const LoginLazyRoute = LoginLazyImport.update({
+  path: '/login',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() => import('./routes/login.lazy').then((d) => d.Route))
+
 const IndexLazyRoute = IndexLazyImport.update({
   path: '/',
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/index.lazy').then((d) => d.Route))
 
-const UserIdIndexLazyRoute = UserIdIndexLazyImport.update({
+const UserIdIndexRoute = UserIdIndexImport.update({
   path: '/$userId/',
   getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./routes/$userId/index.lazy').then((d) => d.Route))
+} as any)
 
 const UserIdHistoryAddLazyRoute = UserIdHistoryAddLazyImport.update({
   path: '/$userId/history/add',
@@ -62,11 +80,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexLazyImport
       parentRoute: typeof rootRoute
     }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginLazyImport
+      parentRoute: typeof rootRoute
+    }
+    '/signup': {
+      id: '/signup'
+      path: '/signup'
+      fullPath: '/signup'
+      preLoaderRoute: typeof SignupLazyImport
+      parentRoute: typeof rootRoute
+    }
+    '/signup-form': {
+      id: '/signup-form'
+      path: '/signup-form'
+      fullPath: '/signup-form'
+      preLoaderRoute: typeof SignupFormLazyImport
+      parentRoute: typeof rootRoute
+    }
     '/$userId/': {
       id: '/$userId/'
       path: '/$userId'
       fullPath: '/$userId'
-      preLoaderRoute: typeof UserIdIndexLazyImport
+      preLoaderRoute: typeof UserIdIndexImport
       parentRoute: typeof rootRoute
     }
     '/$userId/history/$historyId': {
@@ -90,7 +129,10 @@ declare module '@tanstack/react-router' {
 
 export const routeTree = rootRoute.addChildren({
   IndexLazyRoute,
-  UserIdIndexLazyRoute,
+  LoginLazyRoute,
+  SignupLazyRoute,
+  SignupFormLazyRoute,
+  UserIdIndexRoute,
   UserIdHistoryHistoryIdLazyRoute,
   UserIdHistoryAddLazyRoute,
 })
@@ -104,6 +146,9 @@ export const routeTree = rootRoute.addChildren({
       "filePath": "__root.tsx",
       "children": [
         "/",
+        "/login",
+        "/signup",
+        "/signup-form",
         "/$userId/",
         "/$userId/history/$historyId",
         "/$userId/history/add"
@@ -112,8 +157,17 @@ export const routeTree = rootRoute.addChildren({
     "/": {
       "filePath": "index.lazy.tsx"
     },
+    "/login": {
+      "filePath": "login.lazy.tsx"
+    },
+    "/signup": {
+      "filePath": "signup.lazy.tsx"
+    },
+    "/signup-form": {
+      "filePath": "signup-form.lazy.tsx"
+    },
     "/$userId/": {
-      "filePath": "$userId/index.lazy.tsx"
+      "filePath": "$userId/index.tsx"
     },
     "/$userId/history/$historyId": {
       "filePath": "$userId/history/$historyId.lazy.tsx"

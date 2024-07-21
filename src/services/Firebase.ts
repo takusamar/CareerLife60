@@ -9,6 +9,7 @@ import {
   setDoc,
 } from "firebase/firestore";
 import { History, historyConverter } from "../models/History";
+import { User } from "../models/User";
 
 function _initFirebase(config: FirebaseOptions) {
   // Initialize Firebase
@@ -27,6 +28,22 @@ export async function initFirebase(name?: string) {
       const config = await response.json();
       _initFirebase(config);
     }
+  }
+}
+
+export async function setUser(
+  uid: string,
+  data: Partial<Omit<User, "id" | "createdAt" | "updatedAt">>
+) {
+  try {
+    const db = getFirestore();
+    const ref = doc(db, "users", uid);
+    return await setDoc(ref, data);
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error(error.message);
+    }
+    throw error;
   }
 }
 
