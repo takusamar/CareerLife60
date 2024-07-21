@@ -2,11 +2,13 @@ import { ReactNode, useEffect, useState } from "react";
 import { initFirebase } from "../services/Firebase";
 import { getApp } from "firebase/app";
 import {
+  AuthProvider,
   FirebaseAppProvider,
   FirestoreProvider,
   useFirebaseApp,
 } from "reactfire";
 import { getFirestore } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
 
 export const FirebaseProvider = ({ children }: { children: ReactNode }) => {
   const [isLoaded, setIsLoaded] = useState(false);
@@ -38,7 +40,12 @@ export const FirebaseProvider = ({ children }: { children: ReactNode }) => {
 
 const _FirebaseProvider = ({ children }: { children: ReactNode }) => {
   const app = useFirebaseApp();
+  const auth = getAuth(app);
   const firestore = getFirestore(app);
 
-  return <FirestoreProvider sdk={firestore}>{children}</FirestoreProvider>;
+  return (
+    <AuthProvider sdk={auth}>
+      <FirestoreProvider sdk={firestore}>{children}</FirestoreProvider>
+    </AuthProvider>
+  );
 };

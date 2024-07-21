@@ -71,3 +71,28 @@ export function getBackgroundColor(
   const start = dayjs(histories[index].start);
   return target.isSame(start, "month") ? `${color}.400` : `${color}.200`;
 }
+
+// メールアドレスのバリデーション
+export function validateEmail(email: string) {
+  if (email.length > 320) {
+    return false;
+  }
+
+  const parts = email.split("@");
+  if (parts.length !== 2) {
+    return false;
+  }
+
+  const [local, domain] = parts;
+  const localMaxLength = 64;
+  const domainMaxLength = 255;
+  if (local.length > localMaxLength || domain.length > domainMaxLength) {
+    return false;
+  }
+
+  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  if (!emailRegex.test(email)) {
+    return false;
+  }
+  return true;
+}

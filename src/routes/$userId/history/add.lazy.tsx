@@ -46,7 +46,7 @@ function AddHistoryPage() {
       <Text textStyle="h6">経歴を追加</Text>
       {user && (
         <HistoryForm
-          birthYear={user.birthYear}
+          birthYear={user.birth.getFullYear()}
           submitLabel="登録"
           onClose={onClose}
           onSubmit={onSubmit}

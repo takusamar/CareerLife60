@@ -1,11 +1,30 @@
-import { createLazyFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, redirect, Link } from "@tanstack/react-router";
 import { useHistories, useUser } from "../../hooks/useFirestore";
 import { Timeline } from "../../components/Timeline";
 import { Button, HStack, Spacer, VStack } from "@chakra-ui/react";
+import { getAuth } from "firebase/auth";
 
-export const Route = createLazyFileRoute("/$userId/")({
+export const Route = createFileRoute("/$userId/")({
+  beforeLoad: async ({ location }) => {
+    if (!isAuthenticated()) {
+      throw redirect({
+        to: "/",
+        search: {
+          // Use the current location to power a redirect after login
+          // (Do not use `router.state.resolvedLocation` as it can
+          // potentially lag behind the actual current location)
+          redirect: location.href,
+        },
+      });
+    }
+  },
   component: UserPage,
 });
+
+function isAuthenticated() {
+  const auth = getAuth();
+  return !!auth.currentUser;
+}
 
 function UserPage() {
   const { userId } = Route.useParams();

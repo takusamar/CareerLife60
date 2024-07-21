@@ -97,7 +97,7 @@ function HistoryPage() {
             </Button>
           </HStack>
           <HistoryForm
-            birthYear={user.birthYear}
+            birthYear={user.birth.getFullYear()}
             history={history}
             submitLabel="更新"
             onClose={onClose}

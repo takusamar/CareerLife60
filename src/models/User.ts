@@ -10,8 +10,7 @@ import {
 export interface User {
   id: string;
   name: string;
-  birthYear: number;
-  birthMonth: number;
+  birth: Date;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -20,8 +19,7 @@ export const userConverter: FirestoreDataConverter<User> = {
   toFirestore(user: WithFieldValue<User>): DocumentData {
     return {
       name: user.name,
-      birthYear: user.birthYear,
-      birthMonth: user.birthMonth,
+      birth: user.birth,
       createdAt: user.createdAt === undefined ? serverTimestamp() : undefined,
       updatedAt: serverTimestamp(),
     };
@@ -34,8 +32,7 @@ export const userConverter: FirestoreDataConverter<User> = {
     return {
       id: snapshot.id,
       name: data.name,
-      birthYear: data.birthYear,
-      birthMonth: data.birthMonth,
+      birth: data.birth.toDate(),
       createdAt: data.createdAt?.toDate(),
       updatedAt: data.updatedAt?.toDate(),
     };
