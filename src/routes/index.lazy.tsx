@@ -1,5 +1,7 @@
-import { Box, Button, Text, VStack } from "@chakra-ui/react";
-import { createLazyFileRoute, Link } from "@tanstack/react-router";
+import { Box, Button, CircularProgress, Text, VStack } from "@chakra-ui/react";
+import { createLazyFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useAuthUser } from "../hooks/useFirebaseAuth";
+import { useEffect } from "react";
 
 export const Route = createLazyFileRoute("/")({
   component: IndexPage,
@@ -15,20 +17,30 @@ const message = `
 `;
 
 function IndexPage() {
+  const authUser = useAuthUser();
+  const navigate = useNavigate();
+
+  // ログイン済みの場合はユーザーページにリダイレクト
+  useEffect(() => {
+    if (authUser) {
+      navigate({
+        to: "/$userId",
+        params: { userId: authUser.uid },
+        replace: true,
+      });
+    }
+  }, [authUser, navigate]);
+
+  if (authUser === undefined) {
+    return <CircularProgress isIndeterminate />;
+  }
+
   return (
     <VStack w="full" p={8} spacing={16}>
       <Box w="full">
         <Text whiteSpace="pre-wrap" textAlign="center" textStyle="subtitle1">
           {message}
         </Text>
-      </Box>
-
-      <Box w="full" px={8}>
-        <Link to={"/login"} style={{ width: "100%" }}>
-          <Button borderRadius={100} w="full">
-            ログイン
-          </Button>
-        </Link>
       </Box>
 
       <Box w="full">

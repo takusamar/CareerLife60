@@ -30,6 +30,7 @@ interface Props {
   birthYear: number;
   submitLabel: string;
   history?: History;
+  readOnly?: boolean;
   onClose: () => void;
   onSubmit: (data: HistoryInput) => Promise<void>;
 }
@@ -37,6 +38,7 @@ export const HistoryForm = ({
   birthYear,
   submitLabel,
   history,
+  readOnly = false,
   onClose,
   onSubmit,
 }: Props) => {
@@ -119,6 +121,7 @@ export const HistoryForm = ({
             {...register("title", { required: true })}
             placeholder="タイトル"
             defaultValue={history?.title}
+            isDisabled={readOnly}
           />
         </FormControl>
         <FormControl isRequired>
@@ -131,6 +134,7 @@ export const HistoryForm = ({
               {...register("startYear", { required: true })}
               placeholder="----"
               defaultValue={history?.start.getFullYear()}
+              isDisabled={readOnly}
             >
               {startYears.map((year) => (
                 <option key={year} value={year}>
@@ -144,6 +148,7 @@ export const HistoryForm = ({
               {...register("startMonth", { required: true })}
               placeholder="--"
               defaultValue={history ? history.start.getMonth() + 1 : undefined}
+              isDisabled={readOnly}
             >
               {monthList.map((month) => (
                 <option key={month} value={month}>
@@ -164,6 +169,7 @@ export const HistoryForm = ({
               {...register("endYear", { required: true })}
               placeholder="----"
               defaultValue={history?.end.getFullYear()}
+              isDisabled={readOnly}
             >
               {endYears.map((year) => (
                 <option key={year} value={year}>
@@ -177,6 +183,7 @@ export const HistoryForm = ({
               {...register("endMonth", { required: true })}
               placeholder="--"
               defaultValue={history ? history.end.getMonth() + 1 : undefined}
+              isDisabled={readOnly}
             >
               {monthList.map((month) => (
                 <option key={month} value={month}>
@@ -197,7 +204,7 @@ export const HistoryForm = ({
             キャンセル
           </Button>
           <Box w={2} />
-          <Button type="submit" isDisabled={!isValid}>
+          <Button type="submit" isDisabled={!isValid || readOnly}>
             {submitLabel}
           </Button>
         </HStack>
