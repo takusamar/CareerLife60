@@ -26,10 +26,13 @@ function AddHistoryPage() {
         .year(Number(data.startYear))
         .month(Number(data.startMonth) - 1)
         .toDate(),
-      end: dayjs()
-        .year(Number(data.endYear))
-        .month(Number(data.endMonth) - 1)
-        .toDate(),
+      end:
+        data.endYear !== "" && data.endMonth !== ""
+          ? dayjs()
+              .year(Number(data.endYear))
+              .month(Number(data.endMonth) - 1)
+              .toDate()
+          : undefined,
     });
 
     toast({
