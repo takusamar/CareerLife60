@@ -11,7 +11,7 @@ export interface History {
   id: string;
   title: string;
   start: Date;
-  end: Date;
+  end?: Date;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -36,7 +36,7 @@ export const historyConverter: FirestoreDataConverter<History> = {
       id: snapshot.id,
       title: data.title,
       start: data.start.toDate(),
-      end: data.end.toDate(),
+      end: data.end?.toDate(),
       createdAt: data.createdAt?.toDate(),
       updatedAt: data.updatedAt?.toDate(),
     };

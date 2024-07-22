@@ -92,16 +92,22 @@ export const HistoryForm = ({
   };
 
   const _handleSubmit = async (data: HistoryInput) => {
-    if (
-      data.startYear > data.endYear ||
-      (data.startYear == data.endYear && data.startMonth > data.endMonth)
-    ) {
-      toast({
-        title: "開始年月が終了年月よりも後になっています",
-        status: "error",
-        duration: 3000,
-      });
-      return;
+    const startYear = Number(data.startYear);
+    const startMonth = Number(data.startMonth);
+    const endYear = data.endYear ? Number(data.endYear) : undefined;
+    const endMonth = data.endMonth ? Number(data.endMonth) : undefined;
+
+    if (endYear && endMonth) {
+      const yearDiff = endYear - startYear;
+      const monthDiff = endMonth - startMonth;
+      if (yearDiff < 0 || (yearDiff === 0 && monthDiff < 0)) {
+        toast({
+          title: "開始年月が終了年月よりも後になっています",
+          status: "error",
+          duration: 3000,
+        });
+        return;
+      }
     }
 
     await onSubmit(data);
@@ -159,16 +165,16 @@ export const HistoryForm = ({
             <Text>月</Text>
           </HStack>
         </FormControl>
-        <FormControl isRequired>
+        <FormControl>
           <FormLabel htmlFor="end" textStyle="subtitle1">
             終了
           </FormLabel>
           <HStack>
             <Select
               width={24}
-              {...register("endYear", { required: true })}
+              {...register("endYear", { required: false })}
               placeholder="----"
-              defaultValue={history?.end.getFullYear()}
+              defaultValue={history?.end?.getFullYear()}
               isDisabled={readOnly}
             >
               {endYears.map((year) => (
@@ -180,9 +186,11 @@ export const HistoryForm = ({
             <Text>年</Text>
             <Select
               width={20}
-              {...register("endMonth", { required: true })}
+              {...register("endMonth", { required: false })}
               placeholder="--"
-              defaultValue={history ? history.end.getMonth() + 1 : undefined}
+              defaultValue={
+                history && history.end ? history.end?.getMonth() + 1 : undefined
+              }
               isDisabled={readOnly}
             >
               {monthList.map((month) => (
