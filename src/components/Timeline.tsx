@@ -1,9 +1,9 @@
 import { User } from "../models/User";
 import { History } from "../models/History";
 import { Box, Text, HStack, VStack } from "@chakra-ui/react";
-import { findHistoryIndex, getBackgroundColor } from "../utils/utils";
-import { Link } from "@tanstack/react-router";
 import dayjs from "dayjs";
+import { TimelineCell } from "./TimelineCell";
+import { HistoryTitle } from "./HistoryTitle";
 
 interface Props {
   user: User;
@@ -41,13 +41,12 @@ export const Timeline = ({ user, histories }: Props) => {
       </HStack>
       {[...Array(maxAge)].map((_, age) => {
         // 年の表示は5年ごとに行う
-        const labelYear = age % 5 === 0 ? birth.year() + age : "";
+        const year = birth.year() + age;
+        const labelYear = age % 5 === 0 ? year : "";
         const labelAge = age % 5 === 0 ? age : "";
-        // 10年ごとに下線を太くする
-        const bottomWidth = age % 10 === 9 ? borderWidth + 1 : borderWidth;
-        const bottomColor = age % 10 === 9 ? "red.400" : borderColor;
         return (
-          <HStack key={age} spacing={0} w="full">
+          <HStack key={age} spacing={0} w="full" position="relative">
+            <HistoryTitle userId={user.id} histories={histories} year={year} />
             <Box
               w={6}
               h={4}
@@ -60,32 +59,15 @@ export const Timeline = ({ user, histories }: Props) => {
                 {labelAge}
               </Text>
             </Box>
-            {[...Array(maxMonth)].map((_, index) => {
-              // 背景色を決定する
-              const target = birth.add(age, "year").month(index);
-              const bgColor = getBackgroundColor(histories, birth, target);
-              const historyIndex = findHistoryIndex(histories, target);
-              const path =
-                historyIndex >= 0
-                  ? `/${user.id}/history/${histories[historyIndex].id}`
-                  : undefined;
-
-              return (
-                <Link to={path} key={index}>
-                  <Box
-                    w={6}
-                    h={4}
-                    bgColor={bgColor}
-                    borderRight="solid"
-                    borderBottom="solid"
-                    borderRightWidth={borderWidth}
-                    borderBottomWidth={bottomWidth}
-                    borderRightColor={borderColor}
-                    borderBottomColor={bottomColor}
-                  />
-                </Link>
-              );
-            })}
+            {[...Array(maxMonth)].map((_, index) => (
+              <TimelineCell
+                key={index}
+                birth={birth}
+                age={age}
+                month={index + 1}
+                histories={histories}
+              />
+            ))}
             <Box w={8} h={4} pl={1}>
               <Text textAlign={"start"} textStyle="overline">
                 {labelYear}

@@ -16,6 +16,11 @@ export function calcAge(birthYear: number, targetYear: number) {
   return targetYear - birthYear;
 }
 
+// 2つの年月の真ん中を返す
+export function calcMiddleMonth(start: Dayjs, end: Dayjs) {
+  return start.add(end.diff(start, "month") / 2, "month");
+}
+
 // 指定された年月が該当する経歴一覧のインデックスを返す
 export function findHistoryIndex(histories: History[], target: Dayjs) {
   return histories.findIndex((history) => {
@@ -24,6 +29,20 @@ export function findHistoryIndex(histories: History[], target: Dayjs) {
     const end = dayjs(history.end);
     // 経歴の開始年月と終了年月の範囲に含まれるか判定
     return target.isBetween(start, end, "month", "[]");
+  });
+}
+
+// 指定した年に経歴の重心があれば返す
+export function findHistoriesByYear(histories: History[], year: number) {
+  const start = dayjs().year(year).startOf("year");
+  const end = dayjs().year(year).endOf("year");
+  return histories.filter((history) => {
+    // 経歴の開始年月と終了年月の真ん中を重心とする
+    const middleMonth = calcMiddleMonth(
+      dayjs(history.start),
+      dayjs(history.end)
+    );
+    return middleMonth.isBetween(start, end, "month", "[]");
   });
 }
 
@@ -66,10 +85,8 @@ export function getBackgroundColor(
     return "white";
   }
 
-  // 経歴の開始年月の場合は濃い色、それ以外は薄い色
   const color = getHistoryColor(index);
-  const start = dayjs(histories[index].start);
-  return target.isSame(start, "month") ? `${color}.400` : `${color}.200`;
+  return `${color}.200`;
 }
 
 // メールアドレスのバリデーション
