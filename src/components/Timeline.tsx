@@ -18,7 +18,7 @@ export const Timeline = ({ user, histories }: Props) => {
 
   return (
     <VStack spacing={0} w="full">
-      <HStack spacing={0} w="full">
+      <HStack spacing={0}>
         <Box w={6} h={4} />
         {[...Array(maxMonth)].map((_, index) => {
           const month = index + 1;
@@ -45,7 +45,7 @@ export const Timeline = ({ user, histories }: Props) => {
         const labelYear = age % 5 === 0 ? year : "";
         const labelAge = age % 5 === 0 ? age : "";
         return (
-          <HStack key={age} spacing={0} w="full" position="relative">
+          <HStack key={age} spacing={0} position="relative">
             <HistoryTitle userId={user.id} histories={histories} year={year} />
             <Box
               w={6}
