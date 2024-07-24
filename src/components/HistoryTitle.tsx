@@ -28,8 +28,8 @@ export const HistoryTitle = ({ userId, histories, year }: Props) => {
           const pr = startM < endM ? endM * 4 : 0;
 
           return (
-            <Box pl={pl} pr={pr}>
-              <Link to={path} key={index}>
+            <Box key={index} pl={pl} pr={pr}>
+              <Link to={path}>
                 <Text textStyle="caption">{history.title}</Text>
               </Link>
             </Box>
