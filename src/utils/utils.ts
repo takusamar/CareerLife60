@@ -1,9 +1,3 @@
-// 経歴表示における年齢の計算方法
-// 生年を0歳とする
-// 早生まれ、年度、月の比較は行わない
-// （例）
-// 1975年12月生まれ：経歴開始1982年4月→7歳
-
 import dayjs, { Dayjs } from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
 dayjs.extend(isBetween);
@@ -11,14 +5,22 @@ dayjs.extend(isBetween);
 import { History } from "../models/History";
 import { historyColors } from "./constants";
 
+// 経歴表示における年齢の計算方法
+// 生年を0歳とする
+// 早生まれ、年度、月の比較は行わない
+// （例）
+// 1975年12月生まれ：経歴開始1982年4月→7歳
 // 1976年2月生まれ：経歴開始1982年4月→6歳
 export function calcAge(birthYear: number, targetYear: number) {
   return targetYear - birthYear;
 }
 
 // 2つの年月の真ん中を返す
-export function calcMiddleMonth(start: Dayjs, end: Dayjs) {
-  return start.add(end.diff(start, "month") / 2, "month");
+export function calcMiddleMonth(m1: Dayjs, m2: Dayjs) {
+  // 開始年月、終了年月を判定
+  const [start, end] = m1.isBefore(m2) ? [m1, m2] : [m2, m1];
+  const diff = end.endOf("month").diff(start.startOf("month"), "month");
+  return start.add(diff / 2, "month");
 }
 
 // 指定された年月が該当する経歴一覧のインデックスを返す
